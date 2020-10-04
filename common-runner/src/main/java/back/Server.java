@@ -3,7 +3,9 @@ package back;
 
 
 
+import com.back.api.IDomain;
 import com.back.config.api.ConfigRegistry;
+import com.back.config.api.IConfig;
 import com.back.config.api.IServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,8 @@ public class Server {
 
     static public void main(String[] args)
     {
-        ConfigRegistry.initWithClassPath(Server.class,"application.properties").setup();
+        ConfigRegistry.initWithClassPath(Server.class,"application.properties").bind(IServer.class, IConfig.SERVER_CLASS_PROPERTY).
+                bind(IDomain.class,IConfig.DOMAIN_CLASS_PROPERTY).toConfig().setup();
         int port=findPort();
         if(port<0)
             throw new RuntimeException("cannot find a free port in range");

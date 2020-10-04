@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -23,7 +24,8 @@ public class DomainTest {
 
             @Override
             public boolean proceedRequest(int id, Function<CallTrailer, Boolean> decider, Supplier<CallTrailer> onNull) {
-                return false;
+
+                return decider.apply(trailers.computeIfAbsent(id,(k)->{return onNull.get();}));
             }
 
             @Override
@@ -38,13 +40,13 @@ public class DomainTest {
 
             @Override
             public IDataHolder shutdown() {
-                return null;
+                return this;
             }
         };
 
         @Override
         protected IDataHolder getDataPopulator() {
-            return null;
+            return holder;
         }
     }
     ConcreteDomainImpl d;

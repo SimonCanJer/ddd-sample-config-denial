@@ -7,23 +7,10 @@
         <groupId>org.domain.sample</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hazelcast-nw-share</artifactId>
+    <artifactId>config-api</artifactId>
     <version>1.0-SNAPSHOT</version>
-<dependencies>
-    <dependency>
-        <groupId>org.domain.sample</groupId>
-        <artifactId>denial.busines-logic</artifactId>
-        <version>1.0-SNAPSHOT</version>
 
-    </dependency>
-    <dependency>
-        <groupId>com.hazelcast</groupId>
-        <artifactId>hazelcast</artifactId>
-        <version>3.9.4</version>
-    </dependency>
-</dependencies>
 
 </project>

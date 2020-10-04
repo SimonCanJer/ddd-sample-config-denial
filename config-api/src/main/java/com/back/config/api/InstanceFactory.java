@@ -1,8 +1,6 @@
 package com.back.config.api;
 
 
-import com.back.api.IDomain;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -40,10 +38,6 @@ public class InstanceFactory {
     }
 
     private static final Map<Class<?>,InterfaceFactory> mapProducers= new HashMap<>();
-    static {
-        mapProducers.put(IDomain.class, new InterfaceFactory<IDomain>());
-        mapProducers.put(IServer.class, new InterfaceFactory<IServer>());
-    }
 
 
     private static <I> Supplier<I> createInstance(Class<I> cl)
@@ -56,23 +50,32 @@ public class InstanceFactory {
         }
 
     }
-    static void setup(Properties props)
+    static void setup(Map<Class, String> map, Properties props)
     {
       //  Properties props= readPropertiesFile();
-
-        String server= props.getProperty("server.class");
-        String domain = props.getProperty("domain.class");
         ClassLoader loader= InstanceFactory.class.getClassLoader();
-        try
-        {
-            mapProducers.get(IDomain.class).implementer=createInstance(loader.loadClass(domain));
-            mapProducers.get(IServer.class).implementer= createInstance(loader.loadClass(server));
+        //String server= props.getProperty("server.class");
 
-        }
-        catch(Exception e)
-        {
-            throw new Error(e);
-        }
+        //String domain = props.getProperty("domain.class");
+        map.entrySet().stream().forEach((entry)->{
+            try
+            {
+                InterfaceFactory ifact= new InterfaceFactory();
+                ifact.implementer=createInstance(loader.loadClass(props.getProperty(entry.getValue())));
+                mapProducers.put(entry.getKey(),ifact);
+
+
+
+            }
+            catch(Exception e)
+            {
+                throw new Error(e);
+            }
+
+
+        });
+
+
     }
     public static <I> Supplier<I> supplier(Class<I> clazz)
     {

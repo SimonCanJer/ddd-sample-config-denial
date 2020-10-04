@@ -1,9 +1,11 @@
 package com.back.api;
 
+import com.back.api.IDomain;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class AbstractDomain  implements IDomain{
+public abstract class AbstractDomain  implements IDomain {
     @Override
     public boolean process(int clientID) {
         return getDataPopulator().proceedRequest(clientID,getBusinessLogic(),getInitialTrailValue());

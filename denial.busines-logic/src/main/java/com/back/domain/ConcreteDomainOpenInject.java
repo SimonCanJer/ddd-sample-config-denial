@@ -5,6 +5,7 @@ import com.back.api.IDataHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.script.ScriptEngineManager;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,10 +25,10 @@ public abstract class ConcreteDomainOpenInject  extends AbstractDomain {
 
         } ;
     }
+
     private boolean processCall(IDataHolder.CallTrailer trailer)
     {
         int count=1;
-
 
         if(System.currentTimeMillis()-trailer.getBirthTime()>FRAME_LEN)
         {

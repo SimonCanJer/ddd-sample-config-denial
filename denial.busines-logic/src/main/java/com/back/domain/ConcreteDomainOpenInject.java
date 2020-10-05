@@ -2,22 +2,38 @@ package com.back.domain;
 
 import com.back.api.AbstractDomain;
 import com.back.api.IDataHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.back.api.IPipeline;
 import javax.script.ScriptEngineManager;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.function.*;
+import java.util.logging.Logger;
+
+/**
+ * Closed /concrete implementation of business logc, but open for injection.
+ * Basically I could keep here getters/setters of IDataHolder, but seems it could force
+ * users to break common system design, whem @Autowired, of @Inject used.
+ *
+ */
 
 public abstract class ConcreteDomainOpenInject  extends AbstractDomain {
-    Logger LOGGER = LoggerFactory.getLogger("SERVER");
+    Logger LOGGER = java.util.logging.Logger.getLogger("SERVER");
     static final int MAX_CALL =5;
     static final long FRAME_LEN=5000L;
+
+    /**
+     * concrete delivery of processing pipeline
+     * @return: implementation of the IPipeline interface
+     */
     @Override
-    protected Function<IDataHolder.CallTrailer, Boolean> getBusinessLogic() {
+    protected IPipeline getBusinessLogicPipeline() {
         return this::processCall;
     }
 
+    /**
+     * Intializes data when it is absent in a storage
+     * @return
+     */
     @Override
     protected Supplier<IDataHolder.CallTrailer> getInitialTrailValue() {
         return ()->{
@@ -26,7 +42,14 @@ public abstract class ConcreteDomainOpenInject  extends AbstractDomain {
         } ;
     }
 
-    private boolean processCall(IDataHolder.CallTrailer trailer)
+    /**
+     * concrete implementation of the  working pipeline
+     * @param trailer    data trailer
+     * @param op         business operfation
+     * @param command    command text
+     * @return           processing result
+     */
+    private IDataHolder.VarResult processCall(IDataHolder.CallTrailer trailer, BiConsumer<Map<String,Serializable>,String> op,String command)
     {
         int count=1;
 
@@ -38,7 +61,58 @@ public abstract class ConcreteDomainOpenInject  extends AbstractDomain {
             count=trailer.incrementAndGet();
 
         LOGGER.info(" count "+count+" when "+(System.currentTimeMillis()-trailer.getBirthTime())+" ellapsed");
-        return count<=MAX_CALL;
+        boolean legal=count<=MAX_CALL;
+        if(!legal)
+            return new IDataHolder.VarResult();
+        if(op!=null) {
+            try {
+                op.accept(trailer.getData(), command);
+            }
+            catch(Throwable t)
+            {
+               StringBuilder sb= new StringBuilder();
+               sb.append(sb.append(t.getMessage()));
+               String src=null;
+               if(t.getCause()!=null)
+               {
+                   src = t.getCause().getMessage();
+               }
+               if(src!=null)
+               {
+                   sb.append(" cause "+src);
+               }
+                return new IDataHolder.VarResult(sb.toString());
+            }
+        }
 
+        return new IDataHolder.VarResult(trailer);
+
+
+    }
+    ScriptProcessor processor= new ScriptProcessor();
+
+    /**
+     * returns concrete business oper\ation
+     * @return consumer which performs the operation and yes,modifies the property map
+     */
+    protected BiConsumer<Map<String,Serializable>,String> getBusinessOperation()
+    {
+        return new BiConsumer<Map<String, Serializable>, String>() {
+            @Override
+            public void accept(Map<String, Serializable> data, String s) {
+                try
+                {
+                    Serializable res=processor.withScriptProcessor("groovy").eval(s,data);
+                    if(res!=null)
+                        data.put("last_result",res);
+
+                }
+                catch(Exception e)
+                {
+                    throw new Error(e);
+                }
+
+            }
+        };
     }
 }

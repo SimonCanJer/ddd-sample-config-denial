@@ -14,6 +14,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+/**
+ * Spring inherent configuration of business logic
+ */
 @SpringBootApplication
 @EnableWebMvc
 public class SpringConfig {
@@ -40,7 +43,7 @@ public class SpringConfig {
     @Bean
     IDataHolder sharedData()
     {
-        return new HazelcastCallTrailShare();
+        return new HazelcastCallTrailShare().init();
     }
     @Bean
     IDomain domain()

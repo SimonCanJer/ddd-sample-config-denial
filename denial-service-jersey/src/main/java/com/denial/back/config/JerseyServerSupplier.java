@@ -6,6 +6,9 @@ import com.denial.back.jersey.JerseyServer;
 
 import java.util.function.Supplier;
 
+/**
+ * Supplier of Jersey based server instance
+ */
 public class JerseyServerSupplier implements Supplier<IServer> {
 
     @Override

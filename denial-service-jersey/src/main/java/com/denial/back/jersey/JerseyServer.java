@@ -2,6 +2,8 @@ package com.denial.back.jersey;
 
 import com.back.config.api.IServer;
 import com.denial.back.config.Config;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -9,7 +11,11 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 /**
  * The class manages build and run of Jersey framework server on the top of
- * Jetty
+ * Jetty. It builds Jersey server over glassfish fw and performs, undercarpet DI using
+ * glashfish DI (Guice like)
+ * @see Config
+ * for implementation
+ * @see JerseyServer registered in the config
  */
 public  class JerseyServer implements IServer {
 
@@ -23,20 +29,15 @@ public  class JerseyServer implements IServer {
         }
     }
     Runnable destroyer;
+    Logger LOGGER= Logger.getLogger(this.getClass());
     @Override
     public void init(int  port,Runnable onStart) {
-        System.out.println("Starting Jetty Server in the port "+port);
+       LOGGER.info("Starting Jetty Server in the port "+port);
         Runnable onStarted=null;
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-
-       /* ServletHolder jerseyServlet = context.addServlet(
-                org.glassfish.jersey.servlet.ServletContainer.class, "/*");
-        jerseyServlet.setInitOrder(0);
-        jerseyServlet.setInitParameter(
-                "jersey.config.server.provider.classnames",Config.class.getCanonicalName()
-                /*JerseyController.class.getCanonicalName());*/
+        //Sparter is config
         context.addServlet(new ServletHolder(new ServletContainer(new Config())), "/*");
         Server jettyServer = new Server(port);
         jettyServer.setHandler(context);

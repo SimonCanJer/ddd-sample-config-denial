@@ -1,15 +1,18 @@
 package com.denial.back.domain;
 
 import com.back.api.IDataHolder;
+import com.back.api.IPipeline;
 import com.back.domain.ConcreteDomainOpenInject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -18,14 +21,15 @@ public class DomainTest {
     final int MODULO = 5;
     static class ConcreteDomainImpl extends ConcreteDomainOpenInject
     {
-        Map<Integer, IDataHolder.CallTrailer> trailers= new ConcurrentHashMap<>();
+        Map<String, IDataHolder.CallTrailer> trailers= new ConcurrentHashMap<>();
 
         IDataHolder holder= new IDataHolder() {
 
-            @Override
-            public boolean proceedRequest(int id, Function<CallTrailer, Boolean> decider, Supplier<CallTrailer> onNull) {
 
-                return decider.apply(trailers.computeIfAbsent(id,(k)->{return onNull.get();}));
+            @Override
+            public VarResult proceedRequest(String id, IPipeline pipeline, BiConsumer<Map<String, Serializable>, String> operation, Supplier<CallTrailer> onNull, String command) {
+                return pipeline.apply(trailers.computeIfAbsent(id,(k)->{return onNull.get();}),operation, command);
+
             }
 
             @Override
@@ -88,7 +92,8 @@ public class DomainTest {
             executor.execute(()->{
 
                 int count= counter.getAndIncrement();
-                d.process(count%MODULO);
+                String s="id="+count%MODULO;
+                d.process(s,"val=1; return ++val");
 
             });
         }

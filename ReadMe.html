@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.7  (Win32)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGEDBY" CONTENT="simon cantpr">
+	<META NAME="CHANGED" CONTENT="20201005;11240578">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin: 0.79in }
+		P { margin-bottom: 0.08in }
+		PRE { font-family: "Toledo" }
+		TD P { margin-bottom: 0in }
+		A:link { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<DIV TYPE=HEADER>
+	<P STYLE="margin-bottom: 0.2in"><BR>
+	</P>
+</DIV>
+<P>                          
+</P>
+<P><FONT FACE="Arial, sans-serif"><FONT SIZE=5 STYLE="font-size: 20pt"><B>					Rationale.</B></FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif">						  </FONT>
+</P>
+<P STYLE="page-break-before: auto"><FONT FACE="Arial, sans-serif">	The
+project is a specially simplified version of one of previous
+solutions, which was configured for Jersey, EJB, Spring, Lambda
+Environment</FONT></P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Arial, sans-serif"><B>					</B><FONT SIZE=4><B>Domain</B></FONT></FONT></P>
+<P STYLE="page-break-before: auto"> <FONT FACE="Arial, sans-serif">	Groovy
+expressions processing with cached/persisted results and denial
+principles (quotation .of call with limited number per time period).</FONT></P>
+<P><FONT FACE="Arial, sans-serif">				          </FONT>
+</P>
+<P><FONT FACE="Arial, sans-serif">					<FONT SIZE=4 STYLE="font-size: 15pt"><B>Design
+and pattern</B></FONT><B>.</B></FONT></P>
+<P><FONT FACE="Arial, sans-serif">				</FONT></P>
+<P><FONT FACE="Arial, sans-serif">	The project implemented in
+accordance to a DDD and TDD paradigms.</FONT></P>
+<P><FONT FACE="Arial, sans-serif">Thus, it has  the for main layers:
+business logic, system configuration, concrete backed services(as
+hazelcast, concrete servers/injectors , system runner/in</FONT></P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Arial, sans-serif">					Layers and modules</FONT></P>
+<TABLE WIDTH=665 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=92>
+	<COL WIDTH=172>
+	<COL WIDTH=375>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><FONT FACE="Arial, sans-serif">Layer</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P>                        <FONT FACE="Arial, sans-serif">Module </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=375>
+			<P>                                 <FONT FACE="Arial, sans-serif">Role</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><FONT FACE="Arial, sans-serif">Business logic</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P><FONT FACE="Arial, sans-serif">denial.busines-logic</FONT></P>
+		</TD>
+		<TD WIDTH=375>
+			<P><FONT FACE="Arial, sans-serif">Defines all the business objects
+			as POJO in pure java terms. Includes abstract classes where
+			business logic is implemented, but injection is abstract. 
+			Controls quotation, runs script expressions. Uses data layer over
+			IDataHolder interface. Exposes and delegates business logic
+			pipeline to the data access layer. Exposes the IDomain interface
+			for injections for REST/controller layer</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><A NAME="config"></A><FONT FACE="Arial, sans-serif">System
+			configuration</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P><FONT FACE="Arial, sans-serif">config-api</FONT></P>
+		</TD>
+		<TD WIDTH=375>
+			<P><FONT FACE="Arial, sans-serif">This layer provides API and
+			handling toolkit with really configures system and defines with
+			framework with IoC, DI , controllers will really be run, She main
+			interface is Iserver. The InstanceFactory class uses system
+			properties (normally-over application.properties) to get
+			information about concrete implementations of server framework.
+			See <FONT COLOR="#000000"><FONT FACE="JetBrains Mono, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">com.denial.back.config.SpingSupplier
+			and com.denial.back.config.DomainSupplier in the
+			com-denial-service-spring-config module and </FONT></FONT></FONT></FONT>
+			</P>
+			<PRE><FONT COLOR="#000000"><FONT FACE="JetBrains Mono, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">com.denial.back.jersey.* ,com.denial.back.config</FONT></FONT></FONT>
+<FONT COLOR="#000000"><FONT FACE="JetBrains Mono, monospace"><FONT SIZE=2 STYLE="font-size: 9pt">* in jersey.  The framework specific initialization will be run by the InstanceFactory class, using the framework and the specific suppliers.</FONT></FONT></FONT>
+</PRE><P>
+			<BR>
+			</P>
+			<P><BR>
+			</P>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><FONT FACE="Arial, sans-serif">Concrete implementation of data
+			layer(Hazelcast in this case)</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P><FONT FACE="Arial, sans-serif">Hazelcast-network- share </FONT>
+			</P>
+		</TD>
+		<TD WIDTH=375>
+			<P><FONT FACE="Arial, sans-serif"><FONT SIZE=3>Implements the data
+			layer abstraction (see <FONT COLOR="#000000">com.back.api.IDataHolder)
+			interface in the frames of the Hazelcast framework.</FONT></FONT></FONT></P>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><FONT FACE="Arial, sans-serif">Concrete REST, IoC, Dependency
+			Injection</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P><FONT FACE="Arial, sans-serif">Denial-service-jersey</FONT></P>
+			<P><FONT FACE="Arial, sans-serif">denial-service-spring-config</FONT></P>
+		</TD>
+		<TD WIDTH=375>
+			<P><FONT FACE="Arial, sans-serif">Performs a Jersy+Glassfish Xor 
+			Spring inherent IoC and DI and provides a framework inherent REST
+			controlle</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><FONT FACE="Arial, sans-serif">Common Server composite 
+			framwork</FONT></P>
+		</TD>
+		<TD WIDTH=172>
+			<P><FONT FACE="Arial, sans-serif">common-runner</FONT></P>
+		</TD>
+		<TD WIDTH=375>
+			<P><FONT FACE="Arial, sans-serif">Initializes server, instantiates
+			and strats </FONT>
+			</P>
+			<P><FONT FACE="Arial, sans-serif">a concrete framework. Uses the
+			config-api module</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=92>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=172>
+			<P><BR>
+			</P>
+		</TD>
+		<TD WIDTH=375>
+			<P><BR>
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Arial, sans-serif">					<FONT SIZE=4 STYLE="font-size: 16pt">Project
+organization.</FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif">	The project is organized as a
+container Maven project with profiles, which a necessary  for
+branching Jersey-Spring. The common-runner module uses profiles
+jersey and spring for switch on dependency level. The switch is of
+file exists/missing mode and triggered by the spring_active file
+existence  in the module directory.</FONT></P>
+<P><FONT FACE="Arial, sans-serif">However there can be used all the 
+dependencies, when  both of cases are necessary in a single jar. </FONT>
+</P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Arial, sans-serif">					<FONT SIZE=4 STYLE="font-size: 15pt">Switch
+between configurations</FONT></FONT></P>
+<P><BR><BR>
+</P>
+<P><FONT FACE="Arial, sans-serif">	As, remarked, for Spring
+configurations the file spring_config must be presented in the 
+common-runner module  directory. Additionally, the content of the 
+section spring config must be opened in the application.properties
+under main/java/resources.</FONT></P>
+<P><FONT FACE="Arial, sans-serif">	For Jersey configuration
+everything is vice versa- the spring_config must be renamed and  the
+jersey config section must be opened, when the spring config section
+must be closed in the named above application properties file.</FONT></P>
+<P><FONT FACE="Arial, sans-serif">					</FONT></P>
+<P><FONT FACE="Arial, sans-serif">					</FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt">Run.</FONT></FONT></P>
+<P> <FONT FACE="Arial, sans-serif"><FONT SIZE=3>The  com.back.Server
+class in the common-runner module.</FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif"><FONT SIZE=3>See print log in the
+console. Server selects a free port in the  range 8080-8099</FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif"><FONT SIZE=3>The post like</FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif"><FONT SIZE=3>h</FONT></FONT><FONT COLOR="#505050"><FONT FACE="OpenSans, Helvetica, Arial, sans-serif"><FONT SIZE=3><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">ttp://localhost:{server_port}/denial/process?clientId=10&amp;command=return
+2*10</SPAN></SPAN></FONT></FONT></FONT><FONT SIZE=3> </FONT><FONT FACE="Arial, sans-serif"><FONT SIZE=3>	</FONT></FONT></P>
+<P><FONT FACE="Arial, sans-serif"><FONT SIZE=3>should return
+</FONT></FONT><FONT FACE="Arial, sans-serif">		{&quot;nextValue&quot;:{&quot;last_result&quot;:20},&quot;result&quot;:true}		</FONT></P>
+<P> 
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

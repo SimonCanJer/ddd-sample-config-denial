@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
- * The class perform initialization of Server.
+ * The class perform initialization of Server
+ * It selects port, initializes class factory and then startes
+ * chain of initializations of concrete server realization
+ *
  *
  */
 public class Server {
@@ -47,7 +50,7 @@ public class Server {
         Thread t= new Thread(()->{
             try {
                 IServer.LAZY.get().init(port, () -> {
-                    System.out.println(" SERVER SIDE : SERVER STARTED ON PORT " + port + ",\n PRESS ENTER TO STOP");
+                   LOGGER.info(" SERVER SIDE : SERVER WILL BE STARTED STARTED ON PORT " + port + ",\n PRESS ENTER TO STOP");
                 });
 
             }

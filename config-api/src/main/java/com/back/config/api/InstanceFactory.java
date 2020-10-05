@@ -8,8 +8,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
- * The class used in order not to involve a heavy  DI frameworks as Spring or Guice.
- * It provides a lazy building of required implementers
+ * The class initializes instances of concrete servers.
+ * @see #setup(Map, Properties)
+ * It is called on the bottom line of configuration
+ * @see ConfigRegistry
+ * @see IConfig
+ * @see, IPropertyBinder
+ * Besides,the class used in order not to involve a heavy  DI frameworks as Spring or Guice.
+ * It provides a lazy building of required implementers, and provides suppliers of instances by interface.
  *
  */
 public class InstanceFactory {
@@ -38,6 +44,7 @@ public class InstanceFactory {
     }
 
     private static final Map<Class<?>,InterfaceFactory> mapProducers= new HashMap<>();
+
 
 
     private static <I> Supplier<I> createInstance(Class<I> cl)

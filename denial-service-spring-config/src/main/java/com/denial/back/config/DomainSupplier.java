@@ -5,6 +5,12 @@ import com.denial.back.spring.SpringConfig;
 
 import java.util.function.Supplier;
 
+/**
+ *  supplier for concrete domain for spring case
+ * @see IDomain
+ * @see IDomain#LAZY
+ */
+
 public class DomainSupplier implements Supplier<IDomain> {
     @Override
     public IDomain get() {

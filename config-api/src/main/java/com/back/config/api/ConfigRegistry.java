@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The class represents registry for configuration, registers and binds information about
+ * concrete initialization of services.
+ */
 public class ConfigRegistry {
     static public IPropertyBinder initWithClassPath(Class anchor, String propsFile)
     {

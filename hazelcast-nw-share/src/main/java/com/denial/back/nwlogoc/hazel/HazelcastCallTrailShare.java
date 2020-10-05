@@ -1,6 +1,7 @@
 package com.denial.back.nwlogoc.hazel;
 
 import com.back.api.IDataHolder;
+import com.back.api.IPipeline;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
@@ -9,14 +10,23 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.map.EntryBackupProcessor;
 import com.hazelcast.map.EntryProcessor;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.*;
 
+/**
+ * Hazelcast based implementation of data service.
+ * Remark. It uses the build in method of network safity of execution of a delegated pipeline
+ * request.
+ * @see IMap#executeOnKey(Object, EntryProcessor)
+ * @see IPipeline
+ * @see #proceedRequest(String, IPipeline, BiConsumer, Supplier, String)
+ */
 public class HazelcastCallTrailShare implements IDataHolder {
-    IMap<Integer, CallTrailer> map;
+    IMap<String, CallTrailer> map;
     private Config mConfig;
     private HazelcastInstance mHazelcast;
     static final String MAP="quotes";
@@ -48,29 +58,30 @@ public class HazelcastCallTrailShare implements IDataHolder {
         Runtime.getRuntime().addShutdownHook(new Thread(()->{
             mHazelcast.shutdown();}));
     }
+
+
     @Override
-    public boolean proceedRequest(int id, Function<CallTrailer,Boolean> decider, Supplier<CallTrailer> onNull) {
-        AtomicBoolean res = new AtomicBoolean(false);
+    public VarResult proceedRequest(String id, IPipeline pipeline, BiConsumer<Map<String, Serializable>, String> operation, Supplier<CallTrailer> onNull, String command) {
+        AtomicReference<VarResult> res= new AtomicReference<>();
 //Hazelcast locks the key in NW
-        return (boolean)map.executeOnKey(id, new EntryProcessor() {
+        return (VarResult) map.executeOnKey(id, new EntryProcessor() {
             @Override
             public Object process(Map.Entry entry) {
                 CallTrailer actual = (CallTrailer) entry.getValue();
                 if(actual==null)
                     actual= onNull.get();
-                res.set(decider.apply(actual));
+                res.set(pipeline.apply(actual,operation,command));
                 entry.setValue(actual);
                 return res.get();
             }
-           @Override
+            @Override
             public EntryBackupProcessor getBackupProcessor() {
                 return null;
             }
         });
 
-
-
     }
+
 
     @Override
     public int registeredClients() {

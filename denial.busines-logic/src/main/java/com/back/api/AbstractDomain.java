@@ -1,17 +1,22 @@
 package com.back.api;
 
-import com.back.api.IDomain;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.function.*;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
+/**
+ * The base abstrcat class of buisness logic, which defines
+ * workflow
+ * @see IPipeline
+ */
 public abstract class AbstractDomain  implements IDomain {
     @Override
-    public boolean process(int clientID) {
-        return getDataPopulator().proceedRequest(clientID,getBusinessLogic(),getInitialTrailValue());
+    public IDataHolder.VarResult process(String clientID,String command) {
+        return getDataPopulator().proceedRequest(clientID, getBusinessLogicPipeline(),getBusinessOperation(),getInitialTrailValue(),command);
     }
     protected abstract IDataHolder getDataPopulator();
-    protected abstract Function<IDataHolder.CallTrailer, Boolean> getBusinessLogic();
+    protected abstract  IPipeline getBusinessLogicPipeline();
+    protected abstract BiConsumer<Map<String,Serializable>,String> getBusinessOperation();
     protected abstract Supplier<IDataHolder.CallTrailer> getInitialTrailValue();
 
 }

@@ -12,12 +12,22 @@ import org.glassfish.jersey.server.ResourceConfig;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+/**
+ * The class registers binders for DI and the
+ * @see JerseyController
+ * class
+ * Besides, it implements suppliers for serverf and domain lazy injection
+ */
 public class Config extends ResourceConfig {
     public Config() {
         register(new Binder());
         register(new JerseyController());
 
     }
+
+    /**
+     * DI inherent implemenation of  Domain
+     */
     static class ConcreteDomainImpl extends ConcreteDomainOpenInject
     {
        /* @Inject*/

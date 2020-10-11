@@ -3,7 +3,7 @@ package com.denial.back.spring;
 
 import com.back.api.IDataHolder;
 import com.back.api.IDomain;
-import com.back.domain.ConcreteDomainOpenInject;
+import com.back.domain.ConcreteDomainObject;
 import com.denial.back.nwlogoc.hazel.HazelcastCallTrailShare;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class SpringConfig {
     {
         SpringApplication.run(SpringConfig.class);
     }
-    static class ConcreteDomainImpl extends ConcreteDomainOpenInject
+   /* static class ConcreteDomainImpl extends ConcreteDomainObject
     {
         @Autowired
         IDataHolder holder;
@@ -39,16 +39,16 @@ public class SpringConfig {
         protected IDataHolder getDataPopulator() {
             return holder;
         }
-    }
+    }*/
     @Bean
     IDataHolder sharedData()
     {
         return new HazelcastCallTrailShare().init();
     }
     @Bean
-    IDomain domain()
+    IDomain domain(@Autowired IDataHolder holder)
     {
-        return new ConcreteDomainImpl();
+        return new ConcreteDomainObject().setDataPopulator(holder);
     }
 
     @Bean

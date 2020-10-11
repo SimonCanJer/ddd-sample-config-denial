@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  */
 
-public abstract class ConcreteDomainOpenInject  extends AbstractDomain {
+public class ConcreteDomainObject extends AbstractDomain {
     Logger LOGGER = java.util.logging.Logger.getLogger("SERVER");
     static final int MAX_CALL =5;
     static final long FRAME_LEN=5000L;

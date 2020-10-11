@@ -2,7 +2,7 @@ package com.denial.back.domain;
 
 import com.back.api.IDataHolder;
 import com.back.api.IPipeline;
-import com.back.domain.ConcreteDomainOpenInject;
+import com.back.domain.ConcreteDomainObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,16 +10,14 @@ import org.junit.Test;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class DomainTest {
     final int MODULO = 5;
-    static class ConcreteDomainImpl extends ConcreteDomainOpenInject
+    static class ConcreteDomainImpl extends ConcreteDomainObject
     {
         Map<String, IDataHolder.CallTrailer> trailers= new ConcurrentHashMap<>();
 

@@ -2,7 +2,7 @@ package com.denial.back.config;
 
 import com.back.api.IDataHolder;
 import com.back.api.IDomain;
-import com.back.domain.ConcreteDomainOpenInject;
+import com.back.domain.ConcreteDomainObject;
 import com.denial.back.jersey.JerseyController;
 import com.denial.back.nwlogoc.hazel.HazelcastCallTrailShare;
 import org.glassfish.hk2.api.Factory;
@@ -25,22 +25,7 @@ public class Config extends ResourceConfig {
 
     }
 
-    /**
-     * DI inherent implemenation of  Domain
-     */
-    static class ConcreteDomainImpl extends ConcreteDomainOpenInject
-    {
-       /* @Inject*/
-        IDataHolder holder;
-        ConcreteDomainImpl(IDataHolder holder)
-        {
-            this.holder=holder;
-        }
-        @Override
-        protected IDataHolder getDataPopulator() {
-            return holder;
-        }
-    }
+
 
     private static final AtomicReference<IDataHolder> holder= new AtomicReference<>();
 
@@ -54,7 +39,7 @@ public class Config extends ResourceConfig {
                 {
                     if(instanceHolder.get()==null)
                     {
-                        instanceHolder.set(new ConcreteDomainImpl(holder.get()));
+                        instanceHolder.set(new ConcreteDomainObject().setDataPopulator(holder.get()));
                     }
                 }
             }
